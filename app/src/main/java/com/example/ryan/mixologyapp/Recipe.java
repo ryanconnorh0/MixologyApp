@@ -40,9 +40,18 @@ public class Recipe {
             RecipeInstruction.TYPE type;
             if (elem.hasClass("recipeDirection")){
                 //type = RecipeInstruction.TYPE.DIRECTION;
-                db.insertDirection(text); //Insert direction into db
-                db.insertRecipe(step_order, drink_id, 0, 0, ids[2]);
-                ids[2]++; //increment direction_id_fk
+                int direction_id;
+
+                if(db.getDirection(text) != 0){
+                    direction_id = (int)db.getDirection(text);
+                }
+                else {
+                    db.insertDirection(text); //Insert direction into db
+                    direction_id = ids[2];
+                    ids[2]++; //increment direction_id_fk
+                }
+
+                db.insertRecipe(step_order, drink_id, 0, 0, direction_id);
             }
             else {
                 //type = RecipeInstruction.TYPE.MEASURE;
@@ -51,17 +60,23 @@ public class Recipe {
                 int j = instruction.indexOf("<a");
                 String serving = instruction.substring(i+1,j-1); //instruction is a serving size and measurement, j-1 MAY BE ERROR
 
-                //i = serving.indexOf("\n");
+                int serve_id, ingredient_id;
+
                 serving = serving.trim();
-                String quantity = serving; //will need to modify this to parse measurement or change the database
-                //String quantity = serving.substring(0, i);
-                //String measurement = serving.substring(i+1);
+                String measurement = serving; //will need to modify this to parse measurement or change the database
 
                 /*realistically we'll need to check if serving already exists
                 * if so db.insertRecipe(...,will use old id for ingredient,...)
-                * also will not increment isd[1]
+                * also will not increment ids[1]
                 * */
-                db.insertServing(quantity,null); //Insert serving into db
+                if(db.getServing(measurement) != 0){ //If serving exists in database
+                    serve_id = (int)db.getServing(measurement); //Set id to existing serving
+                }
+                else {
+                    db.insertServing(measurement); //Insert serving into db
+                    serve_id = ids[1]; //Set new serving id
+                    ids[1]++; //increment serving_id_fk
+                }
 
                 instruction = instruction.substring(j);
                 i = instruction.indexOf('>');
@@ -73,11 +88,16 @@ public class Recipe {
                 * if so db.insertRecipe(...,will use old id for ingredient,...)
                 * also will not increment ids[0]
                 * */
-                db.insertIngredient(ingredient); //Insert ingredient into db
+                if(db.getIngredient(ingredient) != 0){
+                    ingredient_id = (int)db.getIngredient(ingredient);
+                }
+                else {
+                    db.insertIngredient(ingredient); //Insert ingredient into db
+                    ingredient_id = ids[0];
+                    ids[0]++; //increment ingredient_id_fk
+                }
 
-                db.insertRecipe(step_order, drink_id, ids[0], ids[1], 0);
-                ids[0]++; //increment ingredient_id_fk
-                ids[1]++; //increment serving_id_fk
+                db.insertRecipe(step_order, drink_id, ingredient_id, serve_id, 0);
             }
             //this.instructions.add(new RecipeInstruction(text, type));
             step_order++;

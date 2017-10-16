@@ -39,7 +39,6 @@ public class MixDBHelper extends SQLiteOpenHelper{
 
     public static final String SERVING_TABLE_NAME = "serving";
     public static final String SERVING_COLUMN_ID = "_id";
-    public static final String SERVING_COLUMN_QUANTITY = "quantity";
     public static final String SERVING_COLUMN_MEASUREMENT = "measurement";
 
     //NEED TO MAKE MYBAR AND FAVORITES TABLES
@@ -53,8 +52,8 @@ public class MixDBHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + RECIPE_TABLE_NAME + "(" +
-                RECIPE_COLUMN_ID + " INT PRIMARY KEY NOT NULL, " +
-                RECIPE_COLUMN_STEP_ORDER + " INT NOT NULL, " +
+                RECIPE_COLUMN_ID + " INT PRIMARY KEY, " +
+                RECIPE_COLUMN_STEP_ORDER + " INT, " +
                 RECIPE_COLUMN_DRINK_FK + " INT, " +
                 RECIPE_COLUMN_INGREDIENT_FK + " INT, " +
                 RECIPE_COLUMN_SERVING_FK + " INT, " +
@@ -82,7 +81,6 @@ public class MixDBHelper extends SQLiteOpenHelper{
 
         db.execSQL("CREATE TABLE " + SERVING_TABLE_NAME + "(" +
                 SERVING_COLUMN_ID + " INT PRIMARY KEY, " +
-                SERVING_COLUMN_QUANTITY + " TEXT, " +
                 SERVING_COLUMN_MEASUREMENT + " TEXT)"
         );
     }
@@ -117,10 +115,9 @@ public class MixDBHelper extends SQLiteOpenHelper{
         return true;
     }
 
-    public boolean insertServing(String quantity, String measurement) {
+    public boolean insertServing(String measurement) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(SERVING_COLUMN_QUANTITY, quantity);
         contentValues.put(SERVING_COLUMN_MEASUREMENT, measurement);
         db.insert(SERVING_TABLE_NAME, null, contentValues);
         return true;
@@ -157,7 +154,55 @@ public class MixDBHelper extends SQLiteOpenHelper{
         return res;
     }
 
+    /*These get functions help eliminate redundancies in the database*/
+    public long getDirection(String direction){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Query = "SELECT ROWID FROM direction WHERE string LIKE '" + direction + "'";
+        Cursor res = db.rawQuery(Query, null);
 
+        if(res.getCount() <= 0){
+            res.close();
+            return 0;
+        };
+
+        res.moveToFirst();
+        long id = res.getLong(res.getColumnIndex("rowid"));
+        res.close();
+        return id;
+    }
+
+
+    public long getServing(String measurement){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Query = "SELECT ROWID FROM serving WHERE measurement LIKE '" + measurement + "'";
+        Cursor res = db.rawQuery(Query, null);
+
+        if(res.getCount() <= 0){
+            res.close();
+            return 0;
+        };
+
+        res.moveToFirst();
+        long id = res.getLong(res.getColumnIndex("rowid"));
+        res.close();
+        return id;
+    }
+
+    public long getIngredient(String ingredient){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Query = "SELECT ROWID FROM ingredient WHERE name LIKE '" + ingredient + "'";
+        Cursor res = db.rawQuery(Query, null);
+
+        if(res.getCount() <= 0){
+            res.close();
+            return 0;
+        };
+
+        res.moveToFirst();
+        long id = res.getLong(res.getColumnIndex("rowid"));
+        res.close();
+        return id;
+    }
 
     /*May need to add update and delete functions at a later date*/
 
