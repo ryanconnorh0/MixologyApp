@@ -43,6 +43,14 @@ public class MixDBHelper extends SQLiteOpenHelper{
 
     //NEED TO MAKE MYBAR AND FAVORITES TABLES
 
+    public static final String FAVORITE_TABLE_NAME = "favorite";
+    public static final String FAVORITE_COLUMN_ID = "_id";
+    public static final String FAVORITE_COLUMN_DRINK_FK = "dfk";
+
+    public static final String MYBAR_TABLE_NAME = "mybar";
+    public static final String MYBAR_COLUMN_ID = "_id";
+    public static final String MYBAR_COLUMN_INGREDIENT_NAME = "inamefk";
+
 
     /*Constructor*/
     public MixDBHelper(Context context){
@@ -58,9 +66,9 @@ public class MixDBHelper extends SQLiteOpenHelper{
                 RECIPE_COLUMN_INGREDIENT_FK + " INT, " +
                 RECIPE_COLUMN_SERVING_FK + " INT, " +
                 RECIPE_COLUMN_DIRECTION_FK + " INT, " +
-                "FOREIGN KEY (" + RECIPE_COLUMN_DRINK_FK + ") REFERENCES " + DRINK_TABLE_NAME + "(" + DRINK_COLUMN_ID + ")" +
-                "FOREIGN KEY (" + RECIPE_COLUMN_INGREDIENT_FK + ") REFERENCES " + INGREDIENT_TABLE_NAME + "(" + INGREDIENT_COLUMN_ID + ")" +
-                "FOREIGN KEY (" + RECIPE_COLUMN_SERVING_FK + ") REFERENCES " + SERVING_TABLE_NAME + "(" + SERVING_COLUMN_ID + ")" +
+                "FOREIGN KEY (" + RECIPE_COLUMN_DRINK_FK + ") REFERENCES " + DRINK_TABLE_NAME + "(" + DRINK_COLUMN_ID + ")," +
+                "FOREIGN KEY (" + RECIPE_COLUMN_INGREDIENT_FK + ") REFERENCES " + INGREDIENT_TABLE_NAME + "(" + INGREDIENT_COLUMN_ID + ")," +
+                "FOREIGN KEY (" + RECIPE_COLUMN_SERVING_FK + ") REFERENCES " + SERVING_TABLE_NAME + "(" + SERVING_COLUMN_ID + ")," +
                 "FOREIGN KEY (" + RECIPE_COLUMN_DIRECTION_FK + ") REFERENCES " + DIRECTION_TABLE_NAME + "(" + DIRECTION_COLUMN_ID + ") )"
         );
 
@@ -82,6 +90,18 @@ public class MixDBHelper extends SQLiteOpenHelper{
         db.execSQL("CREATE TABLE " + SERVING_TABLE_NAME + "(" +
                 SERVING_COLUMN_ID + " INT PRIMARY KEY, " +
                 SERVING_COLUMN_MEASUREMENT + " TEXT)"
+        );
+
+        db.execSQL("CREATE TABLE " + FAVORITE_TABLE_NAME + "(" +
+                FAVORITE_COLUMN_ID + " INT PRIMARY KEY, " +
+                FAVORITE_COLUMN_DRINK_FK + " INT, " +
+                "FOREIGN KEY (" + FAVORITE_COLUMN_DRINK_FK + ") REFERENCES " + DRINK_TABLE_NAME + "(" + DRINK_COLUMN_ID + ") )"
+        );
+
+        db.execSQL("CREATE TABLE " + MYBAR_TABLE_NAME + "(" +
+                MYBAR_COLUMN_ID + " INT PRIMARY KEY, " +
+                MYBAR_COLUMN_INGREDIENT_NAME + " TEXT, " +
+                "FOREIGN KEY (" + MYBAR_COLUMN_INGREDIENT_NAME + ") REFERENCES " + INGREDIENT_TABLE_NAME + "(" + INGREDIENT_COLUMN_NAME + ") )"
         );
     }
 
