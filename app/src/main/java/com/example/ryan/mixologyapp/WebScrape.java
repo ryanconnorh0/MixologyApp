@@ -1,6 +1,7 @@
 package com.example.ryan.mixologyapp;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.jsoup.*;
 import org.jsoup.nodes.Document;
@@ -31,7 +32,13 @@ public class WebScrape {
     public static void populate(MixDBHelper db){
         try {
             int[] ids = {1, 1, 1}; //ingredient, serving size, direction
-            for (int drink_id = RECIPE_MIN_ID; drink_id <= RECIPE_MAX_ID; drink_id++){
+            for (int drink_id = 0; drink_id <= RECIPE_MAX_ID; drink_id++){
+                if (drink_id == 3550){
+                    continue;
+                }
+
+                Log.d("D", "drink id: " + drink_id);
+
                 String url = URL_PREFIX + Integer.toString(drink_id);
                 Document doc = Jsoup.connect(url).get();
 

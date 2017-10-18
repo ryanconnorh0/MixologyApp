@@ -1,6 +1,7 @@
 package com.example.ryan.mixologyapp;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -37,6 +38,14 @@ public class Recipe {
             String text = elem.text();
             text = text.substring(0, (text.contains("(") ? text.indexOf("(") : text.length())).trim();
 
+            // update text variable so apostrophes are doubled up (sqlite expects this) if they exist
+            if (text.contains("'")){ // this may error if there are two apostrophes in the same string, possible but unlikely
+                int apostropheIndex = text.indexOf("'");
+                text = text.substring(0, apostropheIndex) + "'" + text.substring(apostropheIndex);
+            }
+
+            Log.d("D", "elem text: " + text);
+
             RecipeInstruction.TYPE type;
             if (elem.hasClass("recipeDirection")){
                 //type = RecipeInstruction.TYPE.DIRECTION;
@@ -58,7 +67,9 @@ public class Recipe {
                 String instruction = elem.toString();
                 int i = instruction.indexOf('>');
                 int j = instruction.indexOf("<a");
-                String serving = instruction.substring(i+1,j-1); //instruction is a serving size and measurement, j-1 MAY BE ERROR
+                // String serving = instruction.substring(i+1,j-1); //instruction is a serving size and measurement, j-1 MAY BE ERROR
+
+                String serving = text; // modified this so apostrophe fix is observed
 
                 int serve_id, ingredient_id;
 
@@ -83,6 +94,10 @@ public class Recipe {
                 j = instruction.indexOf("</a>");
                 String ingredient = instruction.substring(i+1,j);
                 ingredient = ingredient.trim();
+                if (ingredient.contains("'")){
+                    int apostropheIndex = ingredient.indexOf("'");
+                    ingredient = ingredient.substring(0, apostropheIndex) + "'" + ingredient.substring(apostropheIndex);
+                }
 
                 /*realistically we'll need to check if ingredient already exists
                 * if so db.insertRecipe(...,will use old id for ingredient,...)

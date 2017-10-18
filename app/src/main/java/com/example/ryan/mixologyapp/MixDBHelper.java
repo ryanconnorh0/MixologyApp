@@ -96,6 +96,7 @@ public class MixDBHelper extends SQLiteOpenHelper{
         ContentValues contentValues = new ContentValues();
         contentValues.put(DRINK_COLUMN_NAME, name);
         db.insert(DRINK_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
@@ -104,6 +105,7 @@ public class MixDBHelper extends SQLiteOpenHelper{
         ContentValues contentValues = new ContentValues();
         contentValues.put(DIRECTION_COLUMN_STRING, instruction);
         db.insert(DIRECTION_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
@@ -112,6 +114,7 @@ public class MixDBHelper extends SQLiteOpenHelper{
         ContentValues contentValues = new ContentValues();
         contentValues.put(INGREDIENT_COLUMN_NAME, name);
         db.insert(INGREDIENT_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
@@ -120,6 +123,7 @@ public class MixDBHelper extends SQLiteOpenHelper{
         ContentValues contentValues = new ContentValues();
         contentValues.put(SERVING_COLUMN_MEASUREMENT, measurement);
         db.insert(SERVING_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
@@ -132,6 +136,7 @@ public class MixDBHelper extends SQLiteOpenHelper{
         contentValues.put(RECIPE_COLUMN_SERVING_FK, serving_id);
         contentValues.put(RECIPE_COLUMN_DIRECTION_FK, direction_id);
         db.insert(RECIPE_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
